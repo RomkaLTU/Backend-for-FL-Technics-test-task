@@ -7,6 +7,7 @@ use App\Http\Requests\AddEvent;
 use App\Http\Requests\RegisterUser;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class ApiController extends Controller
@@ -42,8 +43,31 @@ class ApiController extends Controller
     {
         $validated = $request->validated();
 
-        $event = Event::create($validated);
+        $data = array_add( $validated, 'user_id', Auth::id() );
+
+        $event = Event::create($data);
 
         return $event;
+    }
+
+    public function getevents()
+    {
+        return Event::where('user_id',Auth::id())->get()->groupBy('date');
+    }
+
+    public function complete( Event $event )
+    {
+        $event->update([
+            'status' => 1
+        ]);
+
+        return $this->getevents();
+    }
+
+    public function delete( Event $event )
+    {
+        $event->delete();
+
+        return $this->getevents();
     }
 }

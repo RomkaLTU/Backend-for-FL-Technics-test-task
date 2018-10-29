@@ -23,5 +23,8 @@ Route::prefix('v1')->group(function () {
 Route::middleware('auth:api')->prefix('v1')->group(function () {
 
     Route::post('addevent', 'ApiController@addevent');
+    Route::post('{event}/complete', 'ApiController@complete');
+    Route::delete('{event}', 'ApiController@delete');
+    Route::get('getevents', 'ApiController@getevents');
 
 });
